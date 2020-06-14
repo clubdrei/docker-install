@@ -18,7 +18,7 @@ set -e
 # the script was uploaded (Should only be modified by upload job):
 SCRIPT_COMMIT_SHA=UNKNOWN
 
-# This script should be run with an unprivileged user and install/setup Docker under $HOME/bin/.
+# This script should be run with an unprivileged user and install/setup Docker under $HOME/.local/bin.
 
 # The channel to install from:
 #   * nightly
@@ -48,7 +48,7 @@ case "$CHANNEL" in
 esac
 
 init_vars() {
-	BIN="${DOCKER_BIN:-$HOME/bin}"
+	BIN="${DOCKER_BIN:-$HOME/.local/bin}"
 
 	DAEMON=dockerd
 	SYSTEMD=
@@ -101,7 +101,7 @@ checks() {
 			>&2 echo "- or simply log back in as the desired unprivileged user (ssh works for remote machines)"
 			exit 1
 		fi
-		export XDG_RUNTIME_DIR="/tmp/docker-$(id -u)"
+		export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 		mkdir -p "$XDG_RUNTIME_DIR"
 		XDG_RUNTIME_DIR_CREATED=1
 	fi
@@ -233,7 +233,6 @@ start_docker() {
 	if [ -n "$XDG_CONFIG_HOME" ]; then
 		CFG_DIR="$XDG_CONFIG_HOME"
 	fi
-
 
 	if [ ! -f $CFG_DIR/systemd/user/docker.service ]; then
 		cat <<EOT > $CFG_DIR/systemd/user/docker.service
