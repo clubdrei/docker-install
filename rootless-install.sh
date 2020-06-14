@@ -340,12 +340,18 @@ do_install() {
 		curl -L -o docker.tgz "$STATIC_RELEASE_URL"
 		curl -L -o rootless.tgz "$STATIC_RELEASE_ROOTLESS_URL"
 	)
-	# Extract under $HOME/bin/
+	# Extract under $BIN
 	(
 		mkdir -p "$BIN"
 		cd "$BIN"
 		tar zxf "$tmp/docker.tgz" --strip-components=1
 		tar zxf "$tmp/rootless.tgz" --strip-components=1
+	)
+	# Install docker-compose
+	(
+			cd "$BIN"
+			curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
+			chmod +x docker-compose
 	)
 
 	print_instructions
