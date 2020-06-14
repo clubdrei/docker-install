@@ -215,7 +215,7 @@ start_docker() {
 		return
 	fi
 
-	mkdir -p $HOME/.config/systemd/user
+	mkdir -p "$HOME/.config/systemd/user"
 
 	DOCKERD_FLAGS="--experimental"
 
@@ -233,6 +233,9 @@ start_docker() {
 	if [ -n "$XDG_CONFIG_HOME" ]; then
 		CFG_DIR="$XDG_CONFIG_HOME"
 	fi
+
+    # Make sure $CFG_DIR/systemd/user directory exists, even if $CFG_DIR changed
+    mkdir -p "$CFG_DIR/systemd/user/"
 
 	if [ ! -f $CFG_DIR/systemd/user/docker.service ]; then
 		cat <<EOT > $CFG_DIR/systemd/user/docker.service
